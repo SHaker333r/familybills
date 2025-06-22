@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ميزانية أبو هاشم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 950px;
+            margin: 18px auto;
+            padding: 18px 18px 12px 18px;
+            background: #fff;
+            border-radius: 18px;
+            border: 1.5px solid #222;
+            border-style: solid;
+            border-color: #222;
+            box-shadow: 0 6px 32px #0001;
+            position: relative;
+        }
+        .header-img {
+            display: block;
+            margin: 0 auto 8px auto;
+            max-width: 150px;
+            max-height: 130px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #0001;
+        }
+        h1 {
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            text-align: center;
+            color: #2d3a4a;
+            letter-spacing: 1px;
+        }
+        .actions-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .add-row-btn, .insert-item-btn, .report-btn, .print-btn, .action-btn {
+            box-shadow: 0 2px 8px #0002, 0 1.5px 0 #fff inset;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+            position: relative;
+            background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%);
+            color: #fff;
+            padding: 7px 16px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .add-row-btn:hover, .insert-item-btn:hover, .report-btn:hover, .print-btn:hover, .action-btn:hover {
+            box-shadow: 0 4px 16px #2563eb44, 0 1.5px 0 #fff inset;
+            transform: translateY(-2px) scale(1.04);
+            filter: brightness(1.08);
+        }
+        .insert-item-btn {
+            background: linear-gradient(90deg, #8e44ad 60%, #a084ca 100%);
+        }
+        .insert-item-btn:hover {
+            background: linear-gradient(90deg, #6c3483 60%, #8e44ad 100%);
+        }
+        .report-btn {
+            background: linear-gradient(90deg, #27ae60 60%, #6ee7b7 100%);
+        }
+        .report-btn:hover {
+            background: linear-gradient(90deg, #219150 60%, #27ae60 100%);
+        }
+        .print-btn {
+            background: linear-gradient(90deg, #f59e42 60%, #fcd34d 100%);
+            color: #2d3a4a;
+        }
+        .print-btn:hover {
+            background: linear-gradient(90deg, #e67e22 60%, #f59e42 100%);
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 10px;
+            font-size: 1em;
+            background: #f9fafb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 8px #0001;
+        }
+        th, td {
+            border: none;
+            padding: 2px 2px;
+            text-align: center;
+        }
+        th {
+            background: #e0e7ff;
+            color: #2d3a4a;
+            font-size: 1.08em;
+        }
+        tr:nth-child(even) td {
+            background: #f3f4f6;
+        }
+        tfoot td {
+            font-weight: bold;
+            background: #e0e7ff;
+            color: #1e293b;
+            font-size: 1.1em;
+        }
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 4px 3px;
+            border-radius: 5px;
+            border: 1px solid #cbd5e1;
+            font-size: 1em;
+            background: #fff;
+            transition: border 0.2s;
+        }
+        select:focus, input[type="number"]:focus, input[type="text"]:focus {
+            border: 1.5px solid #2563eb;
+            outline: none;
+        }
+        .action-btn {
+            margin: 0 2px;
+            padding: 10px 28px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .action-btn.edit-btn, .action-btn.delete-btn {
+            padding: 3px 8px;
+            font-size: 0.85em;
+            min-width: 48px;
+        }
+        .edit-btn {
+            background: linear-gradient(90deg, #f39c12 60%, #f7b731 100%);
+            color: #fff;
+        }
+        .edit-btn:hover {
+            background: linear-gradient(90deg, #d35400 60%, #f39c12 100%);
+        }
+        .delete-btn {
+            background: linear-gradient(90deg, #e74c3c 60%, #f87171 100%);
+            color: #fff;
+        }
+        .delete-btn:hover {
+            background: linear-gradient(90deg, #c0392b 60%, #e74c3c 100%);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.18);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 18px 10px 10px 10px;
+            border-radius: 12px;
+            min-width: 260px;
+            box-shadow: 0 2px 16px #0002;
+            text-align: center;
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3a4a;
+            font-weight: 500;
+        }
+        .modal-content input, .modal-content select {
+            width: 90%;
+            margin-bottom: 14px;
+            padding: 7px;
+        }
+        .modal-content button {
+            margin: 0 8px;
+            padding: 8px 18px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            background: #2563eb;
+            color: #fff;
+            transition: background 0.2s;
+        }
+        .modal-content button:hover {
+            background: #1d4ed8;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 10px 2px; }
+            .modal-content { min-width: 90vw; }
+            table { font-size: 0.95em; }
+        }
+        @media (max-width: 700px) {
+            .container {
+                max-width: 98vw;
+                padding: 4vw 1vw 2vw 1vw;
+                border-radius: 10px;
+            }
+            .header-img {
+                max-width: 80px;
+                max-height: 50px;
+            }
+            h1 {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+            .actions-bar {
+                flex-direction: column;
+                gap: 7px;
+                margin-bottom: 8px;
+            }
+            table {
+                font-size: 0.85em;
+                border-radius: 6px;
+            }
+            th, td {
+                padding: 2px 1px;
+            }
+            .action-btn, .add-row-btn, .insert-item-btn, .report-btn, .print-btn {
+                padding: 5px 8px;
+                font-size: 0.9em;
+                min-width: 60px;
+            }
+            .modal-content {
+                min-width: 90vw;
+                padding: 10px 2vw 8px 2vw;
+            }
+        }
+        @media print {
+            body, html {
+                background: #fff !important;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none !important;
+                background: #fff !important;
+                max-width: 100vw !important;
+                padding: 0 !important;
+            }
+            .actions-bar, .modal, .modal-content, .insert-item-btn, .add-row-btn, .report-btn, .print-btn {
+                display: none !important;
+            }
+            table {
+                background: #fff !important;
+                box-shadow: none !important;
+                font-size: 1.1em !important;
+                margin: 0 !important;
+            }
+            th, td {
+                padding: 8px 6px !important;
+                border: 1px solid #bbb !important;
+                color: #222 !important;
+                background: #fff !important;
+            }
+            th {
+                background: #e0e7ff !important;
+                color: #2d3a4a !important;
+            }
+            .header-img {
+                max-width: 180px !important;
+                max-height: 150px !important;
+                display: block !important;
+                margin: 0 auto 10px auto !important;
+            }
+            h1 {
+                font-size: 1.5em !important;
+                color: #222 !important;
+                margin-bottom: 18px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="rabea.png" alt="شعار" class="header-img">
+        <h1>ميزانية أبو هاشم</h1>
+        <form id="budget-form" onsubmit="return false;">
+            <table id="budget-table">
+                <thead>
+                    <tr>
+                        <th>الرقم</th>
+                        <th>السلعة</th>
+                        <th>السعر</th>
+                        <th>العدد</th>
+                        <th>المجموع</th>
+                        <th>الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">المجموع الكلي</td>
+                        <td id="total-sum">0.00 د.ا.‏</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="actions-bar">
+                <button class="add-row-btn" type="button" onclick="addRow()">إضافة صف</button>
+                <button class="insert-item-btn" type="button" onclick="openInsertModal()">ادراج سلعة</button>
+                <button class="report-btn" type="button" onclick="generateReport()">تقرير</button>
+                <button class="print-btn" type="button" onclick="window.print()">طباعة</button>
+            </div>
+        </form>
+        <div id="edit-modal" class="modal">
+            <div class="modal-content">
+                <h3>تعديل بيانات السلعة</h3>
+                <form id="edit-item-form" onsubmit="return false;">
+                    <label for="edit-item-name">السلعة</label>
+                    <select id="edit-item-name">
+                        <!-- سيتم تعبئتها ديناميكياً -->
+                    </select>
+                    <label for="edit-item-price">السعر</label>
+                    <input type="number" id="edit-item-price" min="0" step="0.01">
+                    <br>
+                    <button type="button" onclick="saveEditItem()">حفظ</button>
+                    <button type="button" onclick="closeEditModal()">إلغاء</button>
+                </form>
+            </div>
+        </div>
+        <div id="insert-modal" class="modal">
+            <div class="modal-content">
+                <h3>إدراج سلعة جديدة</h3>
+                <form id="insert-item-form" onsubmit="return false;">
+                    <label for="insert-item-name">اسم السلعة</label>
+                    <input type="text" id="insert-item-name" required>
+                    <label for="insert-item-price">السعر</label>
+                    <input type="number" id="insert-item-price" min="0" step="0.01" required>
+                    <br>
+                    <button type="button" onclick="saveInsertItem()">إدراج</button>
+                    <button type="button" onclick="closeInsertModal()">إلغاء</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const items = [
+            { name: '', price: 0 },
+            { name: 'رز عادي', price: 7.79 },
+            { name: 'رز بسمتي', price: 4.69 },
+            { name: 'زيت قلي', price: 5.45 },
+            { name: 'سكر 10 كيلو', price: 4.99 },
+            { name: 'ملح', price: 0.2 },
+            { name: 'لبن', price: 3.79 },
+            { name: 'لبنة', price: 3 },
+            { name: 'سنيورة', price: 2.75 },
+            { name: 'جبنة مثلثات', price: '' },
+            { name: 'جبنة شيدر', price: '' },
+            { name: 'مربى البندورة', price: 0.96 },
+            { name: 'مربى', price: '' },
+            { name: 'قشطة', price: 1.1 },
+            { name: 'شاي', price: '' },
+            { name: 'حليب', price: '' },
+            { name: 'حمص', price: 1.28 },
+            { name: 'فول', price: '' },
+            { name: 'طن', price: '' },
+            { name: 'سردين', price: '' },
+            { name: 'فطر', price: '' },
+            { name: 'خل', price: '' },
+            { name: 'زعتر', price: 3 },
+            { name: 'لوز', price: 3.5 },
+            { name: 'عدس', price: 1 },
+            { name: 'ماجي', price: 1.9 },
+            { name: 'طحين', price: 2 },
+            { name: 'شعيرية', price: 1 },
+            { name: 'معكرونة', price: '' },
+            { name: 'بازيلا وجزر', price: 0.59 },
+            { name: 'سمك', price: '' },
+            { name: 'فخذ دجاج', price: 2 },
+            { name: 'جناح', price: 2 },
+            { name: 'دجاجة', price: '' },
+            { name: 'ملوخية', price: '' },
+            { name: 'بامية', price: '' },
+            { name: 'ذرة', price: '' }
+        ];
+
+        function createItemOptions(selectedName) {
+            return items.map(item => `<option value="${item.name}" ${item.name === selectedName ? 'selected' : ''}>${item.name}</option>`).join('');
+        }
+
+        function getPriceByName(name) {
+            const item = items.find(i => i.name === name);
+            return item && item.price ? parseFloat(item.price) : 0;
+        }
+
+        function formatCurrency(value) {
+            return Number(value).toLocaleString('ar-JO', { style: 'currency', currency: 'JOD', minimumFractionDigits: 2 });
+        }
+
+        function addRow() {
+            const tbody = document.getElementById('table-body');
+            const rowCount = tbody.rows.length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${rowCount}</td>
+                <td>
+                    <select onchange="onItemChange(this)">
+                        ${createItemOptions('')}
+                    </select>
+                </td>
+                <td>
+                    <select onchange="onPriceChange(this)">
+                        <option value="0"></option>
+                    </select>
+                </td>
+                <td><input type="number" min="1" value="1" onchange="onQtyChange(this)"></td>
+                <td class="row-sum" data-raw-sum="0">${formatCurrency(0)}</td>
+                <td>
+                    <button type="button" class="action-btn edit-btn" onclick="editRow(this)">تعديل</button>
+                    <button type="button" class="action-btn delete-btn" onclick="deleteRow(this)">حذف</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            updateRowSum(tr);
+            updateTotalSum();
+            saveTableData();
+        }
+
+        function onItemChange(select) {
+            const tr = select.closest('tr');
+            const itemName = select.value;
+            const priceSelect = tr.children[2].querySelector('select');
+            const price = getPriceByName(itemName);
+            // تحديث قائمة الأسعار لتحتوي فقط على سعر السلعة المختارة
+            priceSelect.innerHTML = `<option value="${price}">${price !== 0 ? formatCurrency(price) : ''}</option>`;
+            priceSelect.value = price;
+            updateRowSum(tr);
+            updateTotalSum();
+        }
+
+        function openEditModalRow(btn) {
+            const tr = btn.closest('tr');
+            const itemSelect = tr.children[1].querySelector('select');
+            const priceSelect = tr.children[2].querySelector('select');
+            const itemName = itemSelect.value;
+            const itemIdx = items.findIndex(i => i.name === itemName);
+            document.getElementById('edit-modal').style.display = 'flex';
+            const select = document.getElementById('edit-item-name');
+            select.innerHTML = items.map((item, idx) => idx === 0 ? '' : `<option value="${idx}" ${item.name === itemName ? 'selected' : ''}>${item.name}</option>`).join('');
+            document.getElementById('edit-item-price').value = priceSelect.value;
+            select.dataset.rowIndex = Array.from(tr.parentNode.children).indexOf(tr);
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        function saveEdit() {
+            const tbody = document.getElementById('table-body');
+            const tr = tbody.querySelector('tr');
+            const itemName = document.getElementById('edit-item-name').value;
+            const itemPrice = document.getElementById('edit-item-price').value;
+            const itemQty = document.getElementById('edit-item-qty').value;
+
+            tr.children[1].querySelector('select').value = itemName;
+            tr.children[2].querySelector('select').value = itemPrice;
+            tr.children[3].querySelector('input').value = itemQty;
+
+            updateRowSum(tr);
+            updateTotalSum();
+            closeModal();
+        }
+
+        function openEditModal() {
+            const modal = document.getElementById('edit-modal');
+            const select = document.getElementById('edit-item-name');
+            select.innerHTML = items.map((item, idx) => idx === 0 ? '' : `<option value="${idx}">${item.name}</option>`).join('');
+            document.getElementById('edit-item-price').value = '';
+            select.selectedIndex = 0;
+            modal.style.display = 'flex';
+        }
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+        document.getElementById('edit-item-name').addEventListener('change', function() {
+            const idx = this.value;
+            if (idx && items[idx]) {
+                document.getElementById('edit-item-price').value = items[idx].price;
+            } else {
+                document.getElementById('edit-item-price').value = '';
+            }
+        });
+        function saveEditItem() {
+            const idx = document.getElementById('edit-item-name').value;
+            const price = document.getElementById('edit-item-price').value;
+            const select = document.getElementById('edit-item-name');
+            const rowIndex = select.dataset.rowIndex;
+            if (idx && items[idx]) {
+                items[idx].price = price;
+                // تحديث الصف المحدد فقط
+                if (rowIndex !== undefined) {
+                    const tbody = document.getElementById('table-body');
+                    const tr = tbody.children[rowIndex];
+                    if (tr) {
+                        tr.children[1].querySelector('select').value = items[idx].name;
+                        tr.children[2].querySelector('select').innerHTML = `<option value="${price}">${formatCurrency(price)}</option>`;
+                        tr.children[2].querySelector('select').value = price;
+                        updateRowSum(tr);
+                        updateTotalSum();
+                    }
+                } else {
+                    updateAllPrices();
+                }
+            }
+            closeEditModal();
+        }
+        function updateAllPrices() {
+            const tbody = document.getElementById('table-body');
+            Array.from(tbody.rows).forEach(tr => {
+                const itemSelect = tr.children[1].querySelector('select');
+                const priceSelect = tr.children[2].querySelector('select');
+                const itemName = itemSelect.value;
+                const newPrice = getPriceByName(itemName);
+                priceSelect.value = newPrice;
+                updateRowSum(tr);
+            });
+            updateTotalSum();
+        }
+        function updateRowSum(tr) {
+            const price = parseFloat(tr.children[2].querySelector('select').value) || 0;
+            const qty = parseInt(tr.children[3].querySelector('input').value) || 1;
+            const sum = price * qty;
+            tr.children[4].setAttribute('data-raw-sum', sum);
+            tr.children[4].textContent = formatCurrency(sum);
+        }
+        function updateTotalSum() {
+            const tbody = document.getElementById('table-body');
+            let total = 0;
+            Array.from(tbody.rows).forEach(tr => {
+                // اجمع القيمة الرقمية المخزنة في data-raw-sum
+                const rawSum = parseFloat(tr.children[4].getAttribute('data-raw-sum')) || 0;
+                total += rawSum;
+            });
+            const totalCell = document.getElementById('total-sum');
+            if (totalCell) {
+                totalCell.textContent = formatCurrency(total);
+            }
+        }
+
+        // حفظ بيانات الجدول في localStorage
+        function saveTableData() {
+            const tbody = document.getElementById('table-body');
+            const rows = Array.from(tbody.rows).map(tr => {
+                return {
+                    item: tr.children[1].querySelector('select').value,
+                    price: tr.children[2].querySelector('select').value,
+                    qty: tr.children[3].querySelector('input').value
+                };
+            });
+            localStorage.setItem('tableData', JSON.stringify(rows));
+        }
+        // تحميل بيانات الجدول من localStorage
+        function loadTableData() {
+            const data = localStorage.getItem('tableData');
+            if (data) {
+                try {
+                    const rows = JSON.parse(data);
+                    if (Array.isArray(rows)) {
+                        // حذف كل الصفوف القديمة
+                        document.getElementById('table-body').innerHTML = '';
+                        rows.forEach(row => {
+                            const tbody = document.getElementById('table-body');
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td></td>
+                                <td>
+                                    <select onchange="onItemChange(this)">
+                                        ${createItemOptions(row.item)}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select onchange="onPriceChange(this)">
+                                        <option value="${row.price}">${row.price ? formatCurrency(row.price) : ''}</option>
+                                    </select>
+                                </td>
+                                <td><input type="number" min="1" value="${row.qty}" onchange="onQtyChange(this)"></td>
+                                <td class="row-sum" data-raw-sum="0">${formatCurrency(0)}</td>
+                                <td>
+                                    <button type="button" class="action-btn edit-btn" onclick="editRow(this)">تعديل</button>
+                                    <button type="button" class="action-btn delete-btn" onclick="deleteRow(this)">حذف</button>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                            updateRowSum(tr);
+                        });
+                        updateRowNumbers();
+                        updateTotalSum();
+                    }
+                } catch {}
+            }
+        }
+        // استدعاء التحميل عند بداية الصفحة
+        window.onload = () => {
+            loadItemsFromStorage && loadItemsFromStorage();
+            loadTableData();
+        };
+        // تأكد من تحديث المجموع الكلي عند أي تغيير
+        document.addEventListener('input', function(e) {
+            if (e.target && (e.target.matches('select') || e.target.matches('input[type="number"]'))) {
+                updateTotalSum();
+                saveTableData();
+            }
+        });
+        function onQtyChange(input) {
+            const tr = input.closest('tr');
+            updateRowSum(tr);
+            updateTotalSum();
+        }
+        function openInsertModal() {
+            document.getElementById('insert-item-name').value = '';
+            document.getElementById('insert-item-price').value = '';
+            document.getElementById('insert-modal').style.display = 'flex';
+        }
+        function closeInsertModal() {
+            document.getElementById('insert-modal').style.display = 'none';
+        }
+        // حفظ السلع الجديدة في localStorage
+        function saveItemsToStorage() {
+            localStorage.setItem('customItems', JSON.stringify(items));
+        }
+        // تحميل السلع من localStorage
+        function loadItemsFromStorage() {
+            const saved = localStorage.getItem('customItems');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        for (let i = 0; i < parsed.length; i++) {
+                            if (parsed[i].name && parsed[i].price !== undefined) {
+                                items[i] = parsed[i];
+                            }
+                        }
+                    }
+                } catch {}
+            }
+        }
+        // استدعاء التحميل عند بداية الصفحة
+        loadItemsFromStorage();
+        function saveInsertItem() {
+            const name = document.getElementById('insert-item-name').value.trim();
+            const price = document.getElementById('insert-item-price').value;
+            if (name && price) {
+                items.push({ name, price: parseFloat(price) });
+                saveItemsToStorage();
+                closeInsertModal();
+                updateAllItemSelects();
+            }
+        }
+        function updateAllItemSelects() {
+            const tbody = document.getElementById('table-body');
+            Array.from(tbody.rows).forEach(tr => {
+                const itemSelect = tr.children[1].querySelector('select');
+                const currentValue = itemSelect.value;
+                itemSelect.innerHTML = createItemOptions(currentValue);
+                itemSelect.value = currentValue;
+            });
+        }
+        function deleteRow(btn) {
+            const tr = btn.closest('tr');
+            tr.remove();
+            updateRowNumbers();
+            updateTotalSum();
+        }
+        function generateReport() {
+            const tbody = document.getElementById('table-body');
+            let reportWindow = window.open('', '', 'width=900,height=600');
+            let reportHtml = `
+                <html lang="ar" dir="rtl">
+                <head>
+                    <title>تقرير السلع</title>
+                    <style>
+                        body { font-family: 'Cairo', Arial, sans-serif; background: #fff; margin: 0; padding: 20px; }
+                        h2 { text-align: center; color: #2563eb; }
+                        .print-btn-report { margin: 18px auto 0 auto; display: block; padding: 10px 32px; border-radius: 8px; border: none; background: linear-gradient(90deg, #f59e42 60%, #fcd34d 100%); color: #2d3a4a; font-size: 1.1em; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px #0002; }
+                        .print-btn-report:hover { background: linear-gradient(90deg, #e67e22 60%, #f59e42 100%); }
+                        table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+                        th, td { border: 1px solid #bbb; padding: 8px 6px; text-align: center; }
+                        th { background: #e0e7ff; color: #2d3a4a; }
+                        tfoot td { font-weight: bold; background: #e0e7ff; color: #1e293b; }
+                        @media print { .print-btn-report { display: none !important; } }
+                    </style>
+                </head>
+                <body>
+                    <button class="print-btn-report" onclick="window.print()">طباعة التقرير</button>
+                    <h2>تقرير السلع</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الرقم</th>
+                                <th>السلعة</th>
+                                <th>السعر</th>
+                                <th>العدد</th>
+                                <th>المجموع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            Array.from(tbody.rows).forEach(tr => {
+                const num = tr.children[0].textContent;
+                const item = tr.children[1].querySelector('select').value;
+                const price = tr.children[2].querySelector('select').value;
+                const qty = tr.children[3].querySelector('input').value;
+                const sum = tr.children[4].getAttribute('data-raw-sum');
+                reportHtml += `<tr><td>${num}</td><td>${item}</td><td>${price}</td><td>${qty}</td><td>${sum}</td></tr>`;
+            });
+            reportHtml += `</tbody><tfoot><tr><td colspan="4">المجموع الكلي</td><td>${document.getElementById('total-sum').textContent}</td></tr></tfoot></table></body></html>`;
+            reportWindow.document.write(reportHtml);
+            reportWindow.document.close();
+        }
+        // ربط زر "تعديل" في كل صف بدالة editRow
+        // إذا لم تكن الدالة editRow معرفة في الأعلى، أضفها هنا
+        function editRow(btn) {
+            const tr = btn.closest('tr');
+            const itemSelect = tr.children[1].querySelector('select');
+            const priceSelect = tr.children[2].querySelector('select');
+            // فتح نافذة التعديل مع تعبئة القيم الحالية
+            const modal = document.getElementById('edit-modal');
+            const select = document.getElementById('edit-item-name');
+            // تعبئة القائمة المنسدلة بالسلع
+            select.innerHTML = items.map((item, idx) => idx === 0 ? '' : `<option value="${idx}" ${item.name === itemSelect.value ? 'selected' : ''}>${item.name}</option>`).join('');
+            // تعبئة السعر الحالي
+            document.getElementById('edit-item-price').value = priceSelect.value;
+            // حفظ رقم الصف في خاصية data-row-index
+            select.dataset.rowIndex = Array.from(tr.parentNode.children).indexOf(tr);
+            modal.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
